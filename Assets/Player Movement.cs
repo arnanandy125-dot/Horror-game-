@@ -9,6 +9,8 @@ public class PlayerMovement : MonoBehaviour
 
     Rigidbody2D rb;
     Vector2 move;
+    public bool IsMoving => move.sqrMagnitude > 0.01f;
+    public Vector2 MoveInput => move;
 
     void Awake()
     {

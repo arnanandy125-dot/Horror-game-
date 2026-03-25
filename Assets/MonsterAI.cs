@@ -3,7 +3,8 @@ using UnityEngine;
 public class MonsterAI : MonoBehaviour
 {
     public float moveSpeed = 3f;              // Base speed
-    public float speedIncreaseRate = 0.2f;    // How fast it increases
+    public float speedIncreaseRate = 0.2f;  
+     public float maxMoveSpeed = 6f;    //speed cap in monster
     public GameObject gameOverUI;
     private Transform player;
 
@@ -40,15 +41,30 @@ public class MonsterAI : MonoBehaviour
         patrolCenter = transform.position;
 
         monsterSound = GetComponent<AudioSource>();
-        monsterSound.loop = true;
-        monsterSound.playOnAwake = false;
+        if (monsterSound != null)
+        {
+            monsterSound.loop = true;
+            monsterSound.playOnAwake = false;
+        }
+        else
+        {
+            Debug.LogWarning("MonsterAI requires an AudioSource component for monsterSound.");
+        }
 
-        heartBeatSource = gameObject.AddComponent<AudioSource>();
-        heartBeatSource.volume = 0.8f;
-        heartBeatSource.clip = heartBeatSound;
-        heartBeatSource.loop = true;
-        heartBeatSource.playOnAwake = false;
+        if (heartBeatSound != null)
+        {
+            heartBeatSource = gameObject.AddComponent<AudioSource>();
+            heartBeatSource.volume = 0.8f;
+            heartBeatSource.clip = heartBeatSound;
+            heartBeatSource.loop = true;
+            heartBeatSource.playOnAwake = false;
+        }
+        else
+        {
+            Debug.LogWarning("MonsterAI heartBeatSound is not assigned.");
+        }
     }
+
 
     void FixedUpdate()
     {
@@ -56,6 +72,7 @@ public class MonsterAI : MonoBehaviour
 
         // Increase speed gradually
         moveSpeed += speedIncreaseRate * Time.fixedDeltaTime;
+         moveSpeed = Mathf.Min(moveSpeed, maxMoveSpeed);
 
         Vector2 direction = player.position - transform.position;
         float distanceToPlayer = direction.magnitude;
@@ -93,7 +110,8 @@ public class MonsterAI : MonoBehaviour
             return false;
         }
 
-        RaycastHit2D hit = Physics2D.Raycast(transform.position, direction.normalized, visionRange, obstacleLayer);
+        int detectionMask = obstacleLayer | (1 << player.gameObject.layer);
+        RaycastHit2D hit = Physics2D.Raycast(transform.position, direction.normalized, distanceToPlayer, detectionMask);
 
         if (hit.collider == null)
         {
@@ -136,7 +154,7 @@ public class MonsterAI : MonoBehaviour
 
     void UpdateAudio(float distance)
     {
-        if (distance < soundRange)
+         if (monsterSound != null && distance < soundRange)
         {
             if (!monsterSound.isPlaying)
                 monsterSound.Play();
@@ -144,12 +162,12 @@ public class MonsterAI : MonoBehaviour
             float volume = 1 - (distance / soundRange);
             monsterSound.volume = volume * maxVolume;
         }
-        else
+       else if (monsterSound != null)
         {
             monsterSound.Stop();
         }
 
-        if (distance < heartBeatRange)
+       if (heartBeatSource != null && distance < heartBeatRange)
         {
             if (!heartBeatSource.isPlaying)
                 heartBeatSource.Play();
@@ -157,7 +175,7 @@ public class MonsterAI : MonoBehaviour
             float t = 1 - (distance / heartBeatRange);
             heartBeatSource.pitch = Mathf.Lerp(minHeartPitch, maxHeartPitch, t);
         }
-        else if (heartBeatSource.isPlaying)
+        else if (heartBeatSource != null && heartBeatSource.isPlaying)
         {
             heartBeatSource.Stop();
         }

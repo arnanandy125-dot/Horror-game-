@@ -322,6 +322,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::MonsterAI
   moveSpeed: 2
   speedIncreaseRate: 0.2
+  maxMoveSpeed: 5
   gameOverUI: {fileID: 1159447646}
   soundRange: 8
   heartBeatSound: {fileID: 8300000, guid: c66ff1ba3b44b014483680923a69e8df, type: 3}
@@ -821,7 +822,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9f4b8c9e0b28f174b8edaa1104d625ad, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerMovement
-  moveSpeed: 5
+  moveSpeed: 5.5
   winUI: {fileID: 1791152116}
 --- !u!61 &131909396
 BoxCollider2D:

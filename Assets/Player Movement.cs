@@ -37,7 +37,14 @@ public class PlayerMovement : MonoBehaviour
     {
         Debug.Log("GOAL HIT");
         Time.timeScale = 0f;
-        winUI.SetActive(true);
+       if (winUI != null)
+        {
+            winUI.SetActive(true);
+        }
+        else
+        {
+            Debug.LogWarning("PlayerMovement winUI is not assigned.");
+        }
     }
 }
 }

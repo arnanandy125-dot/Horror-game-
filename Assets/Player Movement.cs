@@ -4,11 +4,11 @@ using UnityEngine;
 public class PlayerMovement : MonoBehaviour
 {
     public float moveSpeed = 5f;
+
     public GameObject winUI;   // Drag YouWinText here in Inspector
 
     Rigidbody2D rb;
     Vector2 move;
-
     public bool IsMoving => move.sqrMagnitude > 0.01f;
     public Vector2 MoveInput => move;
 
@@ -37,7 +37,6 @@ public class PlayerMovement : MonoBehaviour
         {
             Debug.Log("GOAL HIT");
             Time.timeScale = 0f;
-
             if (winUI != null)
             {
                 winUI.SetActive(true);

@@ -1,11 +1,12 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using UnityEngine.UI;
+using TMPro;
+
 public class GameManager : MonoBehaviour
 {
     public GameObject startUI;
     public GameObject restartHintUI;
-    public Text timerText;
+    public TMP_Text timerText;
     public KeyCode startKey = KeyCode.Space;
 
     bool gameStarted = false;

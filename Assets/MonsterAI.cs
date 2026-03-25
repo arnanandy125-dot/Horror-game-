@@ -11,8 +11,8 @@ public class MonsterAI : MonoBehaviour
     private AudioSource monsterSound;
     public float soundRange = 6f;
     public AudioClip heartBeatSound;
-    private AudioSource heartBeatSource;  // second sound source
-    public float heartBeatRange = 3f;     // distance for heartbeat
+    private AudioSource heartBeatSource;      // second sound source
+    public float heartBeatRange = 3f;         // distance for heartbeat
     public float maxVolume = 1f;
     public float minHeartPitch = 1f;
     public float maxHeartPitch = 2f;
@@ -29,6 +29,7 @@ public class MonsterAI : MonoBehaviour
     Vector3 currentPatrolTarget;
     bool hasPatrolTarget = false;
     float patrolPauseTimer = 0f;
+
     float playerLookupTimer = 0f;
     const float playerLookupInterval = 0.5f;
 

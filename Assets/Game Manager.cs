@@ -1,13 +1,17 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
+<<<<<<< HEAD
 using TMPro;
 using UnityEngine.UI;
 
+=======
+using UnityEngine.UI;
+>>>>>>> parent of e6eea87 (Made the main menu in textmesh)
 public class GameManager : MonoBehaviour
 {
     public GameObject startUI;
     public GameObject restartHintUI;
-    public TMP_Text timerText;
+    public Text timerText;
     public KeyCode startKey = KeyCode.Space;
     [Range(0f, 1f)] public float startPanelMaxAlpha = 0.45f;
 

@@ -48,6 +48,7 @@ public class GameManager : MonoBehaviour
             SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
         }
     }
+}
 
     void StartRun()
     {
@@ -94,9 +95,6 @@ public class GameManager : MonoBehaviour
         }
 
         Color color = panelImage.color;
-        color.r = 0f;
-        color.g = 0f;
-        color.b = 0f;
         color.a = Mathf.Min(color.a, startPanelMaxAlpha);
         panelImage.color = color;
     }

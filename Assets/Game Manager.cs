@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using TMPro;
+using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
@@ -8,12 +9,14 @@ public class GameManager : MonoBehaviour
     public GameObject restartHintUI;
     public TMP_Text timerText;
     public KeyCode startKey = KeyCode.Space;
+    [Range(0f, 1f)] public float startPanelMaxAlpha = 0.45f;
 
     bool gameStarted = false;
     float runTimer = 0f;
 
     void Start()
     {
+        ClampStartPanelAlpha();
         Time.timeScale = 0f;
         ToggleStartUI(true);
         ToggleRestartHint(false);
@@ -45,6 +48,7 @@ public class GameManager : MonoBehaviour
             SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
         }
     }
+}
 
     void StartRun()
     {
@@ -75,5 +79,23 @@ public class GameManager : MonoBehaviour
         {
             restartHintUI.SetActive(visible);
         }
+    }
+
+    void ClampStartPanelAlpha()
+    {
+        if (startUI == null)
+        {
+            return;
+        }
+
+        Image panelImage = startUI.GetComponent<Image>();
+        if (panelImage == null)
+        {
+            return;
+        }
+
+        Color color = panelImage.color;
+        color.a = Mathf.Min(color.a, startPanelMaxAlpha);
+        panelImage.color = color;
     }
 }

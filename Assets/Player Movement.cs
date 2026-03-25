@@ -4,11 +4,11 @@ using UnityEngine;
 public class PlayerMovement : MonoBehaviour
 {
     public float moveSpeed = 5f;
-
     public GameObject winUI;   // Drag YouWinText here in Inspector
 
     Rigidbody2D rb;
     Vector2 move;
+
     public bool IsMoving => move.sqrMagnitude > 0.01f;
     public Vector2 MoveInput => move;
 
@@ -30,21 +30,22 @@ public class PlayerMovement : MonoBehaviour
     }
 
     void OnTriggerEnter2D(Collider2D other)
-{
-    Debug.Log("Touched something: " + other.name);
-
-    if (other.CompareTag("Goal"))
     {
-        Debug.Log("GOAL HIT");
-        Time.timeScale = 0f;
-       if (winUI != null)
+        Debug.Log("Touched something: " + other.name);
+
+        if (other.CompareTag("Goal"))
         {
-            winUI.SetActive(true);
-        }
-        else
-        {
-            Debug.LogWarning("PlayerMovement winUI is not assigned.");
+            Debug.Log("GOAL HIT");
+            Time.timeScale = 0f;
+
+            if (winUI != null)
+            {
+                winUI.SetActive(true);
+            }
+            else
+            {
+                Debug.LogWarning("PlayerMovement winUI is not assigned.");
+            }
         }
     }
-}
 }

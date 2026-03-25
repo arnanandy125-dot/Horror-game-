@@ -3,16 +3,16 @@ using UnityEngine;
 public class MonsterAI : MonoBehaviour
 {
     public float moveSpeed = 3f;              // Base speed
-    public float speedIncreaseRate = 0.2f;  
-     public float maxMoveSpeed = 6f;    //speed cap in monster
+    public float speedIncreaseRate = 0.2f;    // How fast it increases
+    public float maxMoveSpeed = 6f;           // Hard cap so game stays fair
     public GameObject gameOverUI;
     private Transform player;
 
     private AudioSource monsterSound;
     public float soundRange = 6f;
     public AudioClip heartBeatSound;
-    private AudioSource heartBeatSource;  // second sound source
-    public float heartBeatRange = 3f;     // distance for heartbeat
+    private AudioSource heartBeatSource;      // second sound source
+    public float heartBeatRange = 3f;         // distance for heartbeat
     public float maxVolume = 1f;
     public float minHeartPitch = 1f;
     public float maxHeartPitch = 2f;
@@ -30,15 +30,15 @@ public class MonsterAI : MonoBehaviour
     bool hasPatrolTarget = false;
     float patrolPauseTimer = 0f;
 
+    float playerLookupTimer = 0f;
+    const float playerLookupInterval = 0.5f;
+
     void Start()
     {
-        GameObject foundPlayer = GameObject.FindGameObjectWithTag("Player");
-        if (foundPlayer != null)
-        {
-            player = foundPlayer.transform;
-        }
+        TryFindPlayer();
 
         patrolCenter = transform.position;
+        ChooseNewPatrolTarget();
 
         monsterSound = GetComponent<AudioSource>();
         if (monsterSound != null)
@@ -65,14 +65,24 @@ public class MonsterAI : MonoBehaviour
         }
     }
 
-
     void FixedUpdate()
     {
-        if (player == null) return;
+        if (player == null)
+        {
+            playerLookupTimer -= Time.fixedDeltaTime;
+            if (playerLookupTimer <= 0f)
+            {
+                TryFindPlayer();
+                playerLookupTimer = playerLookupInterval;
+            }
+
+            Patrol();
+            return;
+        }
 
         // Increase speed gradually
         moveSpeed += speedIncreaseRate * Time.fixedDeltaTime;
-         moveSpeed = Mathf.Min(moveSpeed, maxMoveSpeed);
+        moveSpeed = Mathf.Min(moveSpeed, maxMoveSpeed);
 
         Vector2 direction = player.position - transform.position;
         float distanceToPlayer = direction.magnitude;
@@ -121,6 +131,15 @@ public class MonsterAI : MonoBehaviour
         return hit.collider.CompareTag("Player");
     }
 
+    void TryFindPlayer()
+    {
+        GameObject foundPlayer = GameObject.FindGameObjectWithTag("Player");
+        if (foundPlayer != null)
+        {
+            player = foundPlayer.transform;
+        }
+    }
+
     void Patrol()
     {
         if (patrolPauseTimer > 0f)
@@ -154,7 +173,7 @@ public class MonsterAI : MonoBehaviour
 
     void UpdateAudio(float distance)
     {
-         if (monsterSound != null && distance < soundRange)
+        if (monsterSound != null && distance < soundRange)
         {
             if (!monsterSound.isPlaying)
                 monsterSound.Play();
@@ -162,12 +181,12 @@ public class MonsterAI : MonoBehaviour
             float volume = 1 - (distance / soundRange);
             monsterSound.volume = volume * maxVolume;
         }
-       else if (monsterSound != null)
+        else if (monsterSound != null)
         {
             monsterSound.Stop();
         }
 
-       if (heartBeatSource != null && distance < heartBeatRange)
+        if (heartBeatSource != null && distance < heartBeatRange)
         {
             if (!heartBeatSource.isPlaying)
                 heartBeatSource.Play();

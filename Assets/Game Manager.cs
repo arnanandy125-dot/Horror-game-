@@ -1,33 +1,38 @@
+using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-<<<<<<< HEAD
-using TMPro;
 using UnityEngine.UI;
 
-=======
-using UnityEngine.UI;
->>>>>>> parent of e6eea87 (Made the main menu in textmesh)
 public class GameManager : MonoBehaviour
 {
+    [Header("UI References")]
     public GameObject startUI;
+    public GameObject pauseUI;
     public GameObject restartHintUI;
-    public Text timerText;
+    public TMP_Text timerText;
+
+    [Header("Controls")]
     public KeyCode startKey = KeyCode.Space;
+    public KeyCode pauseKey = KeyCode.Escape;
+
+    [Header("Start Overlay")]
     [Range(0f, 1f)] public float startPanelMaxAlpha = 0.45f;
 
-    bool gameStarted = false;
-    float runTimer = 0f;
+    private bool gameStarted = false;
+    private float runTimer = 0f;
 
-    void Start()
+    private void Start()
     {
-        ClampStartPanelAlpha();
         Time.timeScale = 0f;
-        ToggleStartUI(true);
-        ToggleRestartHint(false);
+        ApplyStartOverlayAlpha();
+
+        SetStartUIVisible(true);
+        SetPauseUIVisible(false);
+        SetRestartHintVisible(false);
         UpdateTimerUI();
     }
 
-    void Update()
+    private void Update()
     {
         if (!gameStarted)
         {
@@ -35,7 +40,17 @@ public class GameManager : MonoBehaviour
             {
                 StartRun();
             }
+
             return;
+        }
+
+        if (Input.GetKeyDown(pauseKey) && Time.timeScale > 0f)
+        {
+            PauseRun();
+        }
+        else if (Input.GetKeyDown(pauseKey) && Time.timeScale == 0f && pauseUI != null && pauseUI.activeSelf)
+        {
+            ResumeRun();
         }
 
         if (Time.timeScale > 0f)
@@ -44,7 +59,7 @@ public class GameManager : MonoBehaviour
             UpdateTimerUI();
         }
 
-        ToggleRestartHint(Time.timeScale == 0f);
+        SetRestartHintVisible(Time.timeScale == 0f);
 
         if (Time.timeScale == 0f && Input.GetKeyDown(KeyCode.R))
         {
@@ -52,16 +67,28 @@ public class GameManager : MonoBehaviour
             SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
         }
     }
-}
 
-    void StartRun()
+    private void StartRun()
     {
         gameStarted = true;
         Time.timeScale = 1f;
-        ToggleStartUI(false);
+        SetStartUIVisible(false);
+        SetPauseUIVisible(false);
     }
 
-    void UpdateTimerUI()
+    private void PauseRun()
+    {
+        Time.timeScale = 0f;
+        SetPauseUIVisible(true);
+    }
+
+    private void ResumeRun()
+    {
+        Time.timeScale = 1f;
+        SetPauseUIVisible(false);
+    }
+
+    private void UpdateTimerUI()
     {
         if (timerText != null)
         {
@@ -69,7 +96,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    void ToggleStartUI(bool visible)
+    private void SetStartUIVisible(bool visible)
     {
         if (startUI != null)
         {
@@ -77,7 +104,15 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    void ToggleRestartHint(bool visible)
+    private void SetPauseUIVisible(bool visible)
+    {
+        if (pauseUI != null)
+        {
+            pauseUI.SetActive(visible);
+        }
+    }
+
+    private void SetRestartHintVisible(bool visible)
     {
         if (restartHintUI != null)
         {
@@ -85,7 +120,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    void ClampStartPanelAlpha()
+    private void ApplyStartOverlayAlpha()
     {
         if (startUI == null)
         {
@@ -99,6 +134,9 @@ public class GameManager : MonoBehaviour
         }
 
         Color color = panelImage.color;
+        color.r = 0f;
+        color.g = 0f;
+        color.b = 0f;
         color.a = Mathf.Min(color.a, startPanelMaxAlpha);
         panelImage.color = color;
     }
